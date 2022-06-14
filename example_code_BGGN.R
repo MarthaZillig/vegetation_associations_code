@@ -17,7 +17,7 @@ library(boot)
 
 #Example dataframe for Blue-gray Gnatcatcher (BGGN)
 
-load("output/bggn_example_df.RDS")
+load("bggn_example_df.RDS")
 load("observers_bggn.RDS")
 
 #Occupancy matrix for the three visits to each site 
