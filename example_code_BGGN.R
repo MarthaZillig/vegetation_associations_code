@@ -2,14 +2,16 @@
 
 ###############################################################################################################
 
-# This is example code for models discussed in Zillig and Fleishman (2022) "TITLE OF PAPER HERE" 
+# This is example code for models discussed in Zillig and Fleishman (2022) "Association of birds with floristics and physiognomy differ across five biogeographic subregions of the Great Basin" in Ornithological Applications 
 
 #This code is an example of the final model used for all 19 bird species tested. Here, we show the code for Blue-gray Gnatcatcher. 
+
 #All bird data is available for download on the Forest Service Research Data Archive: https://www.fs.usda.gov/rds/archive/Catalog?authorid=RDS183
 
 ################################################################################################################
 
 
+#Load Packages 
 
 library(tidyverse)
 library(jagsUI)
@@ -51,7 +53,7 @@ obs_num <- obs_bggn %>%
 n_obs <- 52
 
 
-#Scaling Variaibles (fixed effects)
+#Scaling Variables (fixed effects)
 
 bggn_df2$year <- scale(bggn_df2$year) %>% as.vector()
 
@@ -101,10 +103,12 @@ C <- bggn_matrix
 
 data <- list(C = C, M =nrow(C), J = ncol(C), facRegion = bggn_df2$region, X = cov_bggn, Q = Q, year = bggn_df2$year, n_point = n_point, point = point_vector, n_obs = n_obs, obs_num = obs_num, a.vec = a.vec, n_region = n_region)
 
+#initial values 
 Zst <- apply(C, 1, max, na.rm =TRUE)
 
 inits <- function()list(Z = Zst, alpha0 = rnorm(n_region, 0 ,2), beta0 = dnorm(1))
 
+#parameters for JAGS to monitor
 params <- c("beta0",  "alpha1", "alpha0", "betaT", "theta1", "theta2", "bp.value", "bp.value.n")
 
 #JAGS MODEL
@@ -168,6 +172,7 @@ model {
     }
   }
   
+  #bayesian p value calculations 
   total.res <- sum(res[,])
   total.resnew <- sum(res.new[,])
   bp.value <- total.res>total.resnew
